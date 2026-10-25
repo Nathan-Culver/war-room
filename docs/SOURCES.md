@@ -46,3 +46,9 @@ These are recorded implementation gaps, not replacement house rules. The project
 The former schematic renderer reversed the board horizontally and forced a 600px minimum width on mobile. The board texture now retains the original printed geography, names, resources, rail, ports and convoys. Hit areas reverse the TTS X axis and register to the board at ±8.3 local units. The fit view uses the smaller viewport dimension, without a minimum canvas width.
 
 A Pointer Events controller implements one-finger drag, two-finger anchored pinch and pan, single-tap inspection, double-tap zoom/fit, mouse-wheel zoom, keyboard pan/zoom, rotation buttons and an expanded map view. Camera position survives region selection and screen resizing. Dedicated tap-to-open help explains touch gestures, zoom/fit, rotation, full screen, region finding, inspection and map symbols. The app/cache version advances to v0.2.0 / war-room-v2 so previous installs load the corrected interface.
+
+## Map sharpness update (v0.3.0)
+
+The SVG now lays out at the real zoomed dimensions instead of magnifying a viewport-size CSS compositing layer. The browser samples the original board at device pixel density; vector hit areas, markers and annotations rasterize at the current zoom. Unit stacks are capped at a readable screen size and stay upright. Optional region-name/identifier labels appear above 180%, retain constant screen size through zoom and rotation, and avoid collisions with other labels. Labels preserve the camera setting when toggled.
+
+The reference artwork remains its native 2952×2952 pixels. No higher-resolution original was located, and no fabricated/upscaled geography or text is substituted. Original fine print and terrain retain that source's resolution limit; vector annotations remain sharp beyond it.

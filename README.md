@@ -40,3 +40,9 @@ WAR_ROOM_LIMITED=1 node tests/full-games.mjs
 Serve the repository root or `dist/` over HTTP. GitHub Pages serves `main` at the root. `components.json` and `command-inventory.json` preserve the factual transcription; `data.js` embeds them for browser compatibility.
 
 The rulebook, physical game and original game artwork belong to their respective creators/publisher. This project is unaffiliated with Nightingale Games. See [source credits](docs/SOURCES.md).
+
+## Map sharpness update (v0.3.0)
+
+The SVG now lays out at the real zoomed dimensions instead of magnifying a viewport-size CSS compositing layer. The browser samples the original board at device pixel density; vector hit areas, markers and annotations rasterize at the current zoom. Unit stacks are capped at a readable screen size and stay upright. Optional region-name/identifier labels appear above 180%, retain constant screen size through zoom and rotation, and avoid collisions with other labels. Labels preserve the camera setting when toggled.
+
+The reference artwork remains its native 2952×2952 pixels. No higher-resolution original was located, and no fabricated/upscaled geography or text is substituted. Original fine print and terrain retain that source's resolution limit; vector annotations remain sharp beyond it.

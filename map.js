@@ -19,23 +19,29 @@ function shape(r,attrs){
 }
 export function renderWorldMap(state,{selected=null,hero=false}={}){
  const ids=Object.keys(REGIONS).sort((a,b)=>+REGIONS[b].sea-+REGIONS[a].sea||+!!REGIONS[a].circle-+!!REGIONS[b].circle);
- let shapes='',markers='';
+ let shapes='',markers='',labels='';
  for(const id of ids){
   const r=REGIONS[id],active=!state||!!state.regions[id];
   if(!active){shapes+=shape(r,'class="region-unavailable" aria-hidden="true"');continue;}
   const owner=state?.regions[id]?.owner||r.original,changed=owner!==r.original&&!r.sea;
   const classes=['region-shape',id===selected?'selected':'',state?.hotspots?.[id]?'hot':'',changed?'changed-control':''].filter(Boolean).join(' ');
   shapes+=shape(r,`class="${classes}" style="--nation:${NATIONS[owner]?.color||'#aab1b8'}" ${hero?'aria-hidden="true"':`data-region="${id}" role="button" tabindex="0" aria-label="${displayId(id)} ${esc(r.name)}" aria-pressed="${id===selected}"`}`);
+  if(!hero){
+   const[cx,cy]=regionCenter(r),name=r.name.replace(/\b\w/g,c=>c.toUpperCase());
+   labels+=`<g class="map-detail-label" data-detail-id="${id}" data-x="${cx}" data-y="${cy}" data-selected="${id===selected}" data-sea="${!!r.sea}" aria-hidden="true" style="display:none"><rect x="-62" y="-35" width="124" height="31" rx="5"/><text class="map-detail-code" x="0" y="-23">${displayId(id)}</text><text class="map-detail-name" x="0" y="-10" textLength="${Math.min(112,name.length*5.8)}" lengthAdjust="spacingAndGlyphs">${esc(name)}</text></g>`;
+  }
   if(!state||hero)continue;
   const[x,y]=regionCenter(r),cs=state.commands.filter(c=>c.region===id&&c.units.length),nations=[...new Set(cs.map(c=>c.nation))];
+  if(nations.length)markers+=`<g class="map-unit-stack" data-stack-x="${x}" data-stack-y="${y}" transform="translate(${x} ${y})">`;
   nations.forEach((n,i)=>{
-   const count=cs.filter(c=>c.nation===n).reduce((v,c)=>v+c.units.length,0),xx=x-nations.length*18+i*36,yy=y+14;
+   const count=cs.filter(c=>c.nation===n).reduce((v,c)=>v+c.units.length,0),xx=-nations.length*18+i*36,yy=14;
    markers+=`<g class="map-unit" style="--nation:${NATIONS[n].color}" transform="translate(${xx},${yy})"><rect width="32" height="24" rx="4"/><text x="16" y="17">${count}</text></g>`;
   });
+  if(nations.length)markers+='</g>';
   if(changed)markers+=`<g class="map-control" transform="translate(${x-16},${y-34})"><rect width="32" height="20" rx="3" fill="${NATIONS[owner]?.color||'#aab1b8'}"/><text x="16" y="14">${esc(NATIONS[owner]?.prefix.toUpperCase()||'N')}</text></g>`;
   if(state.regions[id].bombs)markers+=`<text class="map-bomb" x="${x+24}" y="${y-15}">✹${state.regions[id].bombs}</text>`;
  }
- return`<svg class="world ${hero?'world-preview':''}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1800" aria-label="War Room board map" ${hero?'role="img"':''}><g data-map-orientation><image href="${BOARD_ART}" x="0" y="0" width="1800" height="1800" preserveAspectRatio="xMidYMid meet" aria-hidden="true"/><g class="map-hit-layer">${shapes}</g><g class="map-markers" aria-hidden="true">${markers}</g></g></svg>`;
+ return`<svg class="world ${hero?'world-preview':''}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1800" aria-label="War Room board map" ${hero?'role="img"':''}><g data-map-orientation><image href="${BOARD_ART}" x="0" y="0" width="1800" height="1800" preserveAspectRatio="xMidYMid meet" image-rendering="optimizeQuality" aria-hidden="true"/><g class="map-hit-layer">${shapes}</g><g class="map-markers" aria-hidden="true">${markers}</g><g class="map-detail-layer" aria-hidden="true">${labels}</g></g></svg>`;
 }
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 export function constrainCamera(c,width,height){
@@ -54,16 +60,39 @@ export function pinchCamera(start,width,height,current){
 // A single controller owns pointer, wheel, keyboard and resize handling. Camera
 // snapshots use board coordinates so a selection/render or rotation of the phone
 // doesn't discard the user's position.
+export function layoutMapLabels(items,camera,width,height,rotation=0){
+ if(camera.scale<1.8)return[];
+ const pixels=Math.min(width,height)*camera.scale/BOARD_SIZE,rad=rotation*Math.PI/180,boxes=[],out=[];
+ const sorted=[...items].sort((a,b)=>Number(b.selected)-Number(a.selected)||Number(a.sea)-Number(b.sea));
+ for(const item of sorted){
+  const x=900+(item.x-900)*Math.cos(rad)-(item.y-900)*Math.sin(rad),y=900+(item.x-900)*Math.sin(rad)+(item.y-900)*Math.cos(rad);
+  const sx=camera.x+x*pixels,sy=camera.y+y*pixels,box={left:sx-66,right:sx+66,top:sy-39,bottom:sy};
+  if(box.right<0||box.left>width||box.bottom<0||box.top>height)continue;
+  if(!item.selected&&boxes.some(b=>box.left<b.right&&box.right>b.left&&box.top<b.bottom&&box.bottom>b.top))continue;
+  boxes.push(box);out.push({...item,x:item.x,y:item.y,inverse:1/pixels});
+ }
+ return out;
+}
+
 export function mountMap(viewport,{snapshot=null,onSelect=()=>{},onChange=()=>{}}={}){
  const panel=viewport.closest('.map-panel'),stage=viewport.querySelector('.map-stage'),svg=viewport.querySelector('.world');
  const pointers=new Map(),abort=new AbortController(),signal=abort.signal;
  let width=0,height=0,base=0,camera={scale:1,x:0,y:0},rotation=snapshot?.rotation||0,expanded=!!snapshot?.expanded,lastTap=snapshot?.lastTap||null;
- let drag=null,pinch=null,hadMultiple=false,moved=false,previousOverflow=null;
+ let drag=null,pinch=null,hadMultiple=false,moved=false,previousOverflow=null,detailLabels=snapshot?.detailLabels!==false;
+ const labelNodes=[...svg.querySelectorAll('[data-detail-id]')],labelItems=labelNodes.map(el=>({id:el.dataset.detailId,x:+el.dataset.x,y:+el.dataset.y,selected:el.dataset.selected==='true',sea:el.dataset.sea==='true'}));
  const status=panel?.querySelector('[data-map-zoom]'),selection=panel?.querySelector('[data-map-selection]');
  function local(e){const r=viewport.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
- function save(){return{scale:camera.scale,centerX:base?(width/2-camera.x)/(base*camera.scale):.5,centerY:base?(height/2-camera.y)/(base*camera.scale):.5,rotation,expanded,lastTap};}
+ function save(){return{scale:camera.scale,centerX:base?(width/2-camera.x)/(base*camera.scale):.5,centerY:base?(height/2-camera.y)/(base*camera.scale):.5,rotation,expanded,lastTap,detailLabels};}
  function paint(){
-  stage.style.width=base+'px';stage.style.height=base+'px';stage.style.transform=`translate(${camera.x}px,${camera.y}px) scale(${camera.scale})`;
+  // Lay out the SVG at its real zoomed size. CSS scale would magnify a
+  // composited screen-size bitmap and blur even vector text on many devices.
+  const draw=base*camera.scale;
+  stage.style.width=draw+'px';stage.style.height=draw+'px';stage.style.transform=`translate(${camera.x}px,${camera.y}px)`;
+  const visible=new Map((detailLabels?layoutMapLabels(labelItems,camera,width,height,rotation):[]).map(i=>[i.id,i]));
+  for(const el of labelNodes){const item=visible.get(el.dataset.detailId);el.style.display=item?'':'none';if(item)el.setAttribute('transform',`translate(${item.x} ${item.y}) rotate(${-rotation}) scale(${item.inverse})`);}
+  const detailControl=panel?.querySelector('[data-map-control="labels"]');if(detailControl){detailControl.setAttribute('aria-pressed',String(detailLabels));detailControl.textContent=detailLabels?'Labels on':'Labels off';}
+  viewport.dataset.renderPixels=Math.round(draw*(window.devicePixelRatio||1));
+  for(const el of svg.querySelectorAll('.map-unit-stack'))el.setAttribute('transform',`translate(${el.dataset.stackX} ${el.dataset.stackY}) rotate(${-rotation}) scale(${Math.min(1,BOARD_SIZE/draw*.9)})`);
   svg.querySelector('[data-map-orientation]')?.setAttribute('transform',`rotate(${rotation} 900 900)`);
   viewport.dataset.scale=camera.scale.toFixed(3);viewport.dataset.panX=camera.x.toFixed(2);viewport.dataset.panY=camera.y.toFixed(2);viewport.dataset.rotation=rotation;
   if(status){status.textContent=Math.round(camera.scale*100)+'%';status.setAttribute('aria-label',`Fit whole map (currently ${Math.round(camera.scale*100)} percent)`);}
@@ -137,6 +166,7 @@ export function mountMap(viewport,{snapshot=null,onSelect=()=>{},onChange=()=>{}
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&expanded&&!document.querySelector('dialog[open]'))setExpanded(false);},{signal});
  panel?.addEventListener('click',e=>{
   const el=e.target.closest('[data-map-control]');if(!el)return;e.preventDefault();
+  if(el.dataset.mapControl==='labels'){detailLabels=!detailLabels;paint();}
   if(el.dataset.mapControl==='in')zoomBy(1.5);if(el.dataset.mapControl==='out')zoomBy(1/1.5);if(el.dataset.mapControl==='fit')fit();
   if(el.dataset.mapControl==='left')rotate(-90);if(el.dataset.mapControl==='right')rotate(90);if(el.dataset.mapControl==='expand')setExpanded(!expanded);
  },{signal});

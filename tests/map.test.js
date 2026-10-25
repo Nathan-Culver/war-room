@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {REGIONS} from '../data.js';
 import {createGame} from '../engine.js';
-import {projectPoint,regionCenter,renderWorldMap,constrainCamera,zoomCamera,pinchCamera} from '../map.js';
+import {projectPoint,regionCenter,renderWorldMap,constrainCamera,zoomCamera,pinchCamera,layoutMapLabels} from '../map.js';
 
 test('board projection agrees with printed island positions and is not mirrored',()=>{
  const azores=projectPoint(REGIONS.b2.circle.c),maldives=projectPoint(REGIONS.b20.circle.c),hawaii=projectPoint(REGIONS.u6.circle.c);
@@ -38,4 +38,21 @@ test('map displays reference board with live overlays and only scenario regions 
  assert(map.includes('D5EA1F53AE0778824FB9AD2FE5466EF2253047CE'));assert(!map.includes('pattern id="grid"'));
  assert.equal((map.match(/data-region=/g)||[]).length,Object.keys(s.regions).length);
  assert(map.includes('region-unavailable'));assert(map.includes('aria-pressed="true"'));assert(!map.includes('style="width:100%'));
+});
+
+
+test('detail labels stay the same screen size at every zoom and yield to selection',()=>{
+ const items=[{id:'one',x:900,y:900,selected:false,sea:false},{id:'selected',x:910,y:900,selected:true,sea:false},{id:'outside',x:0,y:0,selected:false,sea:false}];
+ assert.deepEqual(layoutMapLabels(items,{scale:1,x:0,y:0},390,390),[]);
+ for(const scale of [2,4,8]){
+  const camera={scale,x:195-195*scale,y:195-195*scale},labels=layoutMapLabels(items,camera,390,390);
+  assert.equal(labels[0].id,'selected');assert(!labels.some(l=>l.id==='one'));assert(!labels.some(l=>l.id==='outside'));
+  assert(Math.abs(labels[0].inverse*390*scale/1800-1)<1e-10);
+ }
+});
+test('detail visibility follows rotated board geometry and viewport resize',()=>{
+ const item={id:'east',x:1500,y:900,selected:false,sea:false},camera={scale:3,x:-390,y:-390};
+ assert.equal(layoutMapLabels([item],camera,390,390,0).length,0);
+ const rotated=layoutMapLabels([item],{scale:3,x:-390,y:-780},390,390,90);
+ assert.equal(rotated.length,1);assert.equal(rotated[0].x,1500);assert.equal(rotated[0].y,900);
 });

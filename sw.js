@@ -1,6 +1,6 @@
-const CACHE='war-room-v2';
+const CACHE='war-room-v3';
 const BOARD='https://cdn.steamusercontent.com/ugc/1666856894575883627/D5EA1F53AE0778824FB9AD2FE5466EF2253047CE/';
-const FILES=['./','./index.html','./styles.css?v=0.2.0','./app.js?v=0.2.0','./engine.js','./ai.js','./help.js','./data.js','./storage.js','./map.js?v=0.2.0','./icon.svg'];
+const FILES=['./','./index.html','./styles.css?v=0.3.0','./app.js?v=0.3.0','./engine.js','./ai.js','./help.js','./data.js','./storage.js','./map.js?v=0.3.0','./icon.svg'];
 self.addEventListener('install',e=>{
  e.waitUntil(caches.open(CACHE).then(async c=>{
   await c.addAll(FILES);
