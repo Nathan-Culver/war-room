@@ -1,6 +1,6 @@
 # Sources, verification and remaining work
 
-This is an unofficial playable alpha, not a claim of exhaustive certified rules parity. It uses original browser code, original vector unit icons and an original dark map rendering. It does not redistribute scans of the physical cards, miniature models, board artwork or the complete rulebook.
+This is an unofficial playable alpha, not a claim of exhaustive certified rules parity. It uses original browser code and original vector unit icons. The map displays the unmodified printed-board texture from the publisher-authorized digital reference, with aligned interactive hit areas and live game overlays. See assets/CREDITS.md. It does not redistribute the physical card scans, miniature models or complete rulebook.
 
 ## Primary references
 
@@ -36,7 +36,13 @@ Browser QA covers desktop and 390px phone layouts, map selection, order entry, s
 2. **Neutral defense assignment:** an allied commander is selected using turn rank initially; surviving neutral forces become the defending battle commander's nation. There is no separate pre-battle negotiation screen for choosing any aligned nation's officer.
 3. **Shared convoy coordination:** shared Axis endpoint liability is selectable in region intelligence, but compound multinational raids involving a still-active Soviet–Japanese pact need the same participant partition work as item1.
 4. **AI strategy:** local heuristic opponents, not a trained War Room expert. Hard uses stronger threat/combined-arms preferences; it does not promise expert competitive strength. Long ocean campaigns can stall. AI never reads an opponent's sealed orders or production plan.
-5. **Physical assets and optional variants:** the UI uses functional original representations, not exact photographic assets. The Quick Play and Quick Battle variants, simultaneous physical battle-board handling and officer-role administration are not alternative automated modes in this build. Standard combat and the listed advanced toggles remain available.
+5. **Physical assets and optional variants:** the map now uses the board reference image; unit pieces use functional original icons rather than photographic miniatures. The Quick Play and Quick Battle variants, simultaneous physical battle-board handling and officer-role administration are not alternative automated modes in this build. Standard combat and the listed advanced toggles remain available.
 6. **Verification:** digital component facts have not been audited face-by-face against a current physical set. No publisher endorsement or certification is implied. Save format v1 is intended for this build; future migrations need explicit handling.
 
 These are recorded implementation gaps, not replacement house rules. The project should not be described as a comprehensive, precise copy of every mechanism and asset until they are resolved and independently playtested.
+
+## Map and touch update (v0.2.0)
+
+The former schematic renderer reversed the board horizontally and forced a 600px minimum width on mobile. The board texture now retains the original printed geography, names, resources, rail, ports and convoys. Hit areas reverse the TTS X axis and register to the board at ±8.3 local units. The fit view uses the smaller viewport dimension, without a minimum canvas width.
+
+A Pointer Events controller implements one-finger drag, two-finger anchored pinch and pan, single-tap inspection, double-tap zoom/fit, mouse-wheel zoom, keyboard pan/zoom, rotation buttons and an expanded map view. Camera position survives region selection and screen resizing. Dedicated tap-to-open help explains touch gestures, zoom/fit, rotation, full screen, region finding, inspection and map symbols. The app/cache version advances to v0.2.0 / war-room-v2 so previous installs load the corrected interface.

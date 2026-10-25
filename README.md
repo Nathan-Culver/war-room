@@ -2,14 +2,14 @@
 
 [Play in your browser](https://nathan-culver.github.io/war-room/)
 
-A mobile-first, unofficial browser adaptation of **War Room: A Larry Harris Game**, using the Second Edition rules with the 2025 update. Original dark Situation Room interface, vector world map and unit symbols.
+A mobile-first, unofficial browser adaptation of **War Room: A Larry Harris Game**, using the Second Edition rules with the 2025 update. Original dark Situation Room interface, a reference board map with live game overlays, and original unit symbols.
 
 ## Play
 
 1. Choose one of five theaters and the nation(s) you control. AI handles the rest.
 2. Choose Easy, Normal or Hard. Standard rules are the default.
 3. Follow **What to do next** and open the **?** controls for explanations.
-4. Use **Save → Export JSON** to download a portable save. Import it on another phone or computer. Every decision also autosaves in the current browser; named checkpoints are separate.
+4. On the map, drag to pan, pinch or double tap to zoom, and tap **?** beside a control for touch-friendly instructions. The whole board fits the screen initially. Use **Save → Export JSON** to download a portable save. Import it on another phone or computer. Every decision also autosaves in the current browser; named checkpoints are separate.
 
 All game logic runs on your device. No accounts, external AI services, API keys or paid dependencies are needed. After an initial online visit, the service worker caches the app for offline use.
 
@@ -25,7 +25,7 @@ All game logic runs on your device. No accounts, external AI services, API keys 
 
 ## Status
 
-**Playable alpha. Not a certified exact reproduction of every rule and asset.** Original vector graphics replace the physical artwork. Rare compound Soviet–Japanese pact encounters still need additional rules work; see [sources and known limitations](docs/SOURCES.md). Quick Play and Quick Battle are simplified optional variants and are not substituted for standard rules.
+**Playable alpha. Not a certified exact reproduction of every rule and asset.** The map uses the printed board reference; unit icons remain original vector graphics. Rare compound Soviet–Japanese pact encounters still need additional rules work; see [sources and known limitations](docs/SOURCES.md). Quick Play and Quick Battle are simplified optional variants and are not substituted for standard rules.
 
 ## Development
 

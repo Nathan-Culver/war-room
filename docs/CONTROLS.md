@@ -2,7 +2,7 @@
 
 Choose nations and difficulty, then begin. Use the green **What to do next** banner whenever you are unsure. It names the acting nation, the required decision and the next control to open.
 
-- **World theater:** find or tap a region; zoom using +/−, pan by scrolling or touch. Region intelligence lists units, industry, resources, ports, rails and passages.
+- **World theater:** find or tap a region; the whole board fits the screen initially. Pinch or double tap to zoom, drag with one finger to pan, or use +/− and the percentage button to fit the board. Curved arrows rotate the view; Full screen expands the map. Dedicated ? buttons explain each control. Region intelligence lists units, industry, resources, ports, rails and passages.
 - **Orders & commands:** select a command and destination, add the order, choose an oil bid, then seal. A route can change before execution because earlier nations may block it. Commands can be split/merged when the rules permit.
 - **Operations:** bid rank, execute/cancel each order, choose carrier launches, select hotspots, set each unit's battle stance, assign dice, repair, capture and deploy. A two-region move may select an intermediate region; looping air/naval orders retain the written destination.
 - **National status:** homeland zones, threshold, medals/goods, casualty counts, command-token availability, territory income and victory conditions.
