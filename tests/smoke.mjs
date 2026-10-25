@@ -1,0 +1,2 @@
+import {createGame,decision} from '../engine.js';import {applyAI} from '../ai.js';
+for(const scenario of ['eastern','global']){let s=createGame({scenario,humans:[],seed:42,options:{limited:true}});let steps=0;try{while(!s.winner&&steps<40000){const prev=s;s=applyAI(s);steps++;if(prev===s)throw Error('No action');}console.log(scenario,s.round,steps,s.winner,s.phase,decision(s),s.commands.length);}catch(e){console.error('FAIL',scenario,steps,s.round,s.phase,s.step,JSON.stringify(decision(s)),e.stack);process.exitCode=1;break;}}

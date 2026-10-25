@@ -1,0 +1,107 @@
+[
+  {
+    "scenario": "eastern",
+    "difficulty": "easy",
+    "round": 2,
+    "steps": 317,
+    "winner": "allies"
+  },
+  {
+    "scenario": "eastern",
+    "difficulty": "normal",
+    "round": 2,
+    "steps": 369,
+    "winner": "allies"
+  },
+  {
+    "scenario": "eastern",
+    "difficulty": "hard",
+    "round": 2,
+    "steps": 370,
+    "winner": "allies"
+  },
+  {
+    "scenario": "europe",
+    "difficulty": "easy",
+    "round": 6,
+    "steps": 2381,
+    "winner": "axis"
+  },
+  {
+    "scenario": "europe",
+    "difficulty": "normal",
+    "round": 4,
+    "steps": 1850,
+    "winner": "axis"
+  },
+  {
+    "scenario": "europe",
+    "difficulty": "hard",
+    "round": 5,
+    "steps": 2253,
+    "winner": "axis"
+  },
+  {
+    "scenario": "nafrica",
+    "difficulty": "easy",
+    "round": 3,
+    "steps": 755,
+    "winner": "allies"
+  },
+  {
+    "scenario": "nafrica",
+    "difficulty": "normal",
+    "round": 3,
+    "steps": 622,
+    "winner": "allies"
+  },
+  {
+    "scenario": "nafrica",
+    "difficulty": "hard",
+    "round": 3,
+    "steps": 695,
+    "winner": "axis"
+  },
+  {
+    "scenario": "pacific",
+    "difficulty": "easy",
+    "round": 6,
+    "steps": 1738,
+    "winner": "axis"
+  },
+  {
+    "scenario": "pacific",
+    "difficulty": "normal",
+    "round": 6,
+    "steps": 1666,
+    "winner": "axis"
+  },
+  {
+    "scenario": "pacific",
+    "difficulty": "hard",
+    "round": 6,
+    "steps": 1704,
+    "winner": "axis"
+  },
+  {
+    "scenario": "global",
+    "difficulty": "easy",
+    "round": 6,
+    "steps": 4079,
+    "winner": "allies"
+  },
+  {
+    "scenario": "global",
+    "difficulty": "normal",
+    "round": 6,
+    "steps": 3811,
+    "winner": "axis"
+  },
+  {
+    "scenario": "global",
+    "difficulty": "hard",
+    "round": 6,
+    "steps": 3765,
+    "winner": "axis"
+  }
+]

@@ -1,0 +1,1 @@
+import fs from 'node:fs';fs.mkdirSync('dist',{recursive:true});for(const f of ['index.html','styles.css','app.js','engine.js','ai.js','help.js','data.js','storage.js','sw.js','icon.svg','manifest.webmanifest'])fs.copyFileSync(f,'dist/'+f);fs.cpSync('docs','dist/docs',{recursive:true});console.log('Built War Room in dist/.');
